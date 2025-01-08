@@ -69,16 +69,17 @@ const App = () => {
     setStories(newStories);
   };
   
-  if (isLoading) {
-    return <p>Loading ...</p>;
-  }
   
   return (
     <div>
       <h1>My Hacker Stories</h1>
       <Search searchTerm={searchTerm} handleSearch={handleSearch} />
       <hr />
-      <List list={stories} onRemoveItem={handleRemoveStory} />
+      {isLoading ? (
+        <p>Loading ...</p>
+      ):(
+        <List list={stories} onRemoveItem={handleRemoveStory} />
+      )}
     </div>
   );
 }
