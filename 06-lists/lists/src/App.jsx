@@ -22,10 +22,18 @@ const initialStories = [
 const getAsyncStories = () =>
   new Promise((resolve, reject) =>
     setTimeout(
-      () => reject({ data: { stories: initialStories } }),
+      () => resolve({ data: { stories: initialStories } }),
       2000
     )
   );
+
+const storiesReducer = (state, action) => {
+  if (action.type === 'SET_STORIES') {
+    return action.payload;
+  } else {
+    throw new Error();
+  }
+};
 
 const useStorageState = (key, initialState) => {
   const [value, setValue] = React.useState(
@@ -42,8 +50,13 @@ const App = () => {
 
   const [searchTerm, setSearchTerm] = useStorageState('search', 'React');
   const [isLoading, setIsLoading] = React.useState(false);
-  const [stories, setStories] = React.useState([]);
+  // const [stories, setStories] = React.useState([]);
   const [isError, setIsError] = React.useState(false);
+
+  const [stories, dispatchStories] = React.useReducer(
+    storiesReducer,
+    []
+  );
 
   React.useEffect(() => {
     setIsLoading(true);
@@ -51,7 +64,11 @@ const App = () => {
     getAsyncStories()
       .then(result => {
         console.log('setStories', result);
-        setStories(result.data.stories);
+        //setStories(result.data.stories);
+        dispatchStories({
+          type: 'SET_STORIES',
+          payload: result.data.stories,
+        });
         setIsLoading(false);
       })
       .catch(() => setIsError(true));
@@ -70,21 +87,25 @@ const App = () => {
     const newStories = stories.filter(
       (story) => item.objectID !== story.objectID
     );
-    setStories(newStories);
+    // setStories(newStories);
+    dispatchStories({
+      type: 'SET_STORIES',
+      payload: newStories,
+    });
   };
-  
-  
+
+
   return (
     <div>
       <h1>My Hacker Stories</h1>
       <Search searchTerm={searchTerm} handleSearch={handleSearch} />
       <hr />
-      
+
       {isError && <p>Something went wrong ...</p>}
 
       {isLoading ? (
         <p>Loading ...</p>
-      ):(
+      ) : (
         <List list={stories} onRemoveItem={handleRemoveStory} />
       )}
     </div>
