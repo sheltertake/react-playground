@@ -19,7 +19,13 @@ const initialStories = [
   },
 ];
 
-const getAsyncStories = () => Promise.resolve({ data: { stories: initialStories } });
+const getAsyncStories = () =>
+  new Promise((resolve) =>
+    setTimeout(
+      () => resolve({ data: { stories: initialStories } }),
+      2000
+    )
+  );
 
 const useStorageState = (key, initialState) => {
   const [value, setValue] = React.useState(
@@ -39,7 +45,7 @@ const App = () => {
 
   React.useEffect(() => {
     getAsyncStories().then(result => {
-      console.log('setStories');
+      console.log('setStories', result);
       setStories(result.data.stories);
     });
   }, []);
