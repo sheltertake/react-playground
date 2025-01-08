@@ -1,3 +1,4 @@
+import './App.css'
 
 
 const App = () => {
@@ -21,7 +22,7 @@ const App = () => {
   ];
   return (
     <div>
-      <h1>My Hacker Stories</h1>
+      <h1>My Hacker Stories (TS)</h1>
       <Search />
       <hr />
       <List list={stories} />
@@ -30,7 +31,7 @@ const App = () => {
 }
 
 const Search = () => {
-  const handleChange = (event) => {
+  const handleChange = (event: any) => {
     // synthetic event
     console.log(event);
     // value of target (here: input HTML element)
@@ -62,4 +63,5 @@ const Item = (props) => {
     </li>
   );
 }
-export default App;
+
+export default App
