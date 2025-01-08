@@ -1,5 +1,24 @@
 import React from 'react';
 
+const initialStories = [
+  {
+    title: 'React',
+    url: 'https://reactjs.org/',
+    author: 'Jordan Walke',
+    num_comments: 3,
+    points: 4,
+    objectID: 0,
+  },
+  {
+    title: 'Redux',
+    url: 'https://redux.js.org/',
+    author: 'Dan Abramov, Andrew Clark',
+    num_comments: 2,
+    points: 5,
+    objectID: 1,
+  },
+];
+
 const useStorageState = (key, initialState) => {
   const [value, setValue] = React.useState(
     localStorage.getItem(key) || initialState
@@ -11,26 +30,10 @@ const useStorageState = (key, initialState) => {
 };
 
 const App = () => {
-  const stories = [
-    {
-      title: 'React',
-      url: 'https://reactjs.org/',
-      author: 'Jordan Walke',
-      num_comments: 3,
-      points: 4,
-      objectID: 0,
-    },
-    {
-      title: 'Redux',
-      url: 'https://redux.js.org/',
-      author: 'Dan Abramov, Andrew Clark',
-      num_comments: 2,
-      points: 5,
-      objectID: 1,
-    },
-  ];
+
 
   const [searchTerm, setSearchTerm] = useStorageState('search', 'React');
+  const [stories, setStories] = React.useState(initialStories);
 
   const handleSearch = (event) => {
     setSearchTerm(event.target.value);
@@ -39,12 +42,21 @@ const App = () => {
   const searchedStories = stories.filter((story) =>
     story.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const handleRemoveStory = (item) => {
+    console.log('handleRemoveStory', item)
+    const newStories = stories.filter(
+      (story) => item.objectID !== story.objectID
+    );
+    setStories(newStories);
+  };
+
   return (
     <div>
       <h1>My Hacker Stories</h1>
       <Search searchTerm={searchTerm} handleSearch={handleSearch} />
       <hr />
-      <List list={searchedStories} />
+      <List list={stories} onRemoveItem={handleRemoveStory} />
     </div>
   );
 }
@@ -64,22 +76,30 @@ const Search = ({ searchTerm, handleSearch }) => {
     </>
   );
 };
-const List = ({ list }) => (
+const List = ({ list, onRemoveItem }) => (
   <ul>
-    {list.map(({ objectID, ...item }) => (
-      <Item key={objectID} {...item} />
+    {list.map(item => (
+      <Item key={item.objectID} item={item} onRemoveItem={onRemoveItem} />
     ))}
   </ul>
 );
-const Item = ({ title, url, author, num_comments, points }) => {
+const Item = ({ item, onRemoveItem }) => {
+  const handleRemoveItem = () => {
+    onRemoveItem(item);
+  };
   return (
     <li>
       <span>
-        <a href={url}>{title}</a>
+        <a href={item.url}>{item.title}</a>
       </span>
-      <span>{author}</span>
-      <span>{num_comments}</span>
-      <span>{points}</span>
+      <span>{item.author}</span>
+      <span>{item.num_comments}</span>
+      <span>{item.points}</span>
+      <span>
+        <button type="button" onClick={handleRemoveItem}>
+          Dismiss
+        </button>
+      </span>
     </li>
   );
 }
@@ -95,9 +115,9 @@ const InputWithLabel = ({
 
   const inputRef = React.useRef();
   React.useEffect(() => {
-  if (isFocused && inputRef.current) {
-    inputRef.current.focus();
-  }
+    if (isFocused && inputRef.current) {
+      inputRef.current.focus();
+    }
   }, [isFocused]);
 
   return (
