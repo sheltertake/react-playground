@@ -41,12 +41,15 @@ const App = () => {
 
 
   const [searchTerm, setSearchTerm] = useStorageState('search', 'React');
+  const [isLoading, setIsLoading] = React.useState(false);
   const [stories, setStories] = React.useState([]);
 
   React.useEffect(() => {
+    setIsLoading(true);
     getAsyncStories().then(result => {
       console.log('setStories', result);
       setStories(result.data.stories);
+      setIsLoading(false);
     });
   }, []);
 
@@ -65,7 +68,11 @@ const App = () => {
     );
     setStories(newStories);
   };
-
+  
+  if (isLoading) {
+    return <p>Loading ...</p>;
+  }
+  
   return (
     <div>
       <h1>My Hacker Stories</h1>
