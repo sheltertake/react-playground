@@ -20,9 +20,9 @@ const initialStories = [
 ];
 
 const getAsyncStories = () =>
-  new Promise((resolve) =>
+  new Promise((resolve, reject) =>
     setTimeout(
-      () => resolve({ data: { stories: initialStories } }),
+      () => reject({ data: { stories: initialStories } }),
       2000
     )
   );
@@ -43,14 +43,18 @@ const App = () => {
   const [searchTerm, setSearchTerm] = useStorageState('search', 'React');
   const [isLoading, setIsLoading] = React.useState(false);
   const [stories, setStories] = React.useState([]);
+  const [isError, setIsError] = React.useState(false);
 
   React.useEffect(() => {
     setIsLoading(true);
-    getAsyncStories().then(result => {
-      console.log('setStories', result);
-      setStories(result.data.stories);
-      setIsLoading(false);
-    });
+
+    getAsyncStories()
+      .then(result => {
+        console.log('setStories', result);
+        setStories(result.data.stories);
+        setIsLoading(false);
+      })
+      .catch(() => setIsError(true));
   }, []);
 
   const handleSearch = (event) => {
@@ -75,6 +79,9 @@ const App = () => {
       <h1>My Hacker Stories</h1>
       <Search searchTerm={searchTerm} handleSearch={handleSearch} />
       <hr />
+      
+      {isError && <p>Something went wrong ...</p>}
+
       {isLoading ? (
         <p>Loading ...</p>
       ):(
