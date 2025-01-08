@@ -56,8 +56,11 @@ const Search = ({ searchTerm, handleSearch }) => {
         id="search"
         label="Search"
         value={searchTerm}
+        isFocused
         onInputChange={handleSearch}
-        />
+      >
+        <strong>Search:</strong>
+      </InputWithLabel>
     </>
   );
 };
@@ -83,20 +86,32 @@ const Item = ({ title, url, author, num_comments, points }) => {
 
 const InputWithLabel = ({
   id,
-  label,
   value,
   type = 'text',
   onInputChange,
-}) => (
-  <>
-    <label htmlFor={id}>{label}</label>
-    &nbsp;
-    <input
-      id={id}
-      type={type}
-      value={value}
-      onChange={onInputChange}
-    />
-  </>
-);
+  isFocused,
+  children,
+}) => {
+
+  const inputRef = React.useRef();
+  React.useEffect(() => {
+  if (isFocused && inputRef.current) {
+    inputRef.current.focus();
+  }
+  }, [isFocused]);
+
+  return (
+    <>
+      <label htmlFor={id}>{children}</label>
+      &nbsp;
+      <input
+        id={id}
+        type={type}
+        value={value}
+        autoFocus={isFocused}
+        onChange={onInputChange}
+      />
+    </>
+  );
+}
 export default App;

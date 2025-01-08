@@ -78,10 +78,11 @@ const Search = ({
     <>
       <InputWithLabel
         id="search"
-        label="Search"
         value={searchTerm}
         onInputChange={handleSearch}
-      />
+      >
+        <strong>Search:</strong>
+      </InputWithLabel>
     </>
   );
 };
@@ -119,19 +120,19 @@ const Item = ({
 
 const InputWithLabel = ({
   id,
-  label,
   value,
   type = 'text',
   onInputChange,
+  children,
 }:{
   id: string,
-  label: string,
   value: string,
   type?: string,
-  onInputChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onInputChange: (event: React.ChangeEvent<HTMLInputElement>) => void,
+  children: React.ReactNode
 }) => (
   <>
-    <label htmlFor={id}>{label}</label>
+    <label htmlFor={id}>{children}</label>
     &nbsp;
     <input
       id={id}
