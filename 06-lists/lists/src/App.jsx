@@ -30,6 +30,10 @@ const getAsyncStories = () =>
 const storiesReducer = (state, action) => {
   if (action.type === 'SET_STORIES') {
     return action.payload;
+  } else if (action.type === 'REMOVE_STORY') {
+    return state.filter(
+      (story) => action.payload.objectID !== story.objectID
+    );
   } else {
     throw new Error();
   }
@@ -84,13 +88,9 @@ const App = () => {
 
   const handleRemoveStory = (item) => {
     console.log('handleRemoveStory', item)
-    const newStories = stories.filter(
-      (story) => item.objectID !== story.objectID
-    );
-    // setStories(newStories);
     dispatchStories({
-      type: 'SET_STORIES',
-      payload: newStories,
+      type: 'REMOVE_STORY',
+      payload: item,
     });
   };
 
