@@ -19,6 +19,8 @@ const initialStories = [
   },
 ];
 
+const getAsyncStories = () => Promise.resolve({ data: { stories: initialStories } });
+
 const useStorageState = (key, initialState) => {
   const [value, setValue] = React.useState(
     localStorage.getItem(key) || initialState
@@ -33,7 +35,14 @@ const App = () => {
 
 
   const [searchTerm, setSearchTerm] = useStorageState('search', 'React');
-  const [stories, setStories] = React.useState(initialStories);
+  const [stories, setStories] = React.useState([]);
+
+  React.useEffect(() => {
+    getAsyncStories().then(result => {
+      console.log('setStories');
+      setStories(result.data.stories);
+    });
+  }, []);
 
   const handleSearch = (event) => {
     setSearchTerm(event.target.value);
@@ -84,9 +93,6 @@ const List = ({ list, onRemoveItem }) => (
   </ul>
 );
 const Item = ({ item, onRemoveItem }) => {
-  const handleRemoveItem = () => {
-    onRemoveItem(item);
-  };
   return (
     <li>
       <span>
@@ -96,7 +102,7 @@ const Item = ({ item, onRemoveItem }) => {
       <span>{item.num_comments}</span>
       <span>{item.points}</span>
       <span>
-        <button type="button" onClick={handleRemoveItem}>
+        <button type="button" onClick={() => onRemoveItem(item)}> {/* onClick={onRemoveItem.bind(null, item)} */}
           Dismiss
         </button>
       </span>
