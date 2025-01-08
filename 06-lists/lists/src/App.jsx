@@ -1,14 +1,13 @@
 import React from 'react';
 
-const useStorageState = () => {
-  const [searchTerm, setSearchTerm] = React.useState(
-    localStorage.getItem('search') || ''
+const useStorageState = (key, initialState) => {
+  const [value, setValue] = React.useState(
+    localStorage.getItem(key) || initialState
   );
   React.useEffect(() => {
-    localStorage.setItem('search', searchTerm);
-  }, [searchTerm]);
-  
-  return [searchTerm, setSearchTerm];
+    localStorage.setItem(key, value);
+  }, [value, key]);
+  return [value, setValue];
 };
 
 const App = () => {
@@ -31,7 +30,7 @@ const App = () => {
     },
   ];
 
-  const [searchTerm, setSearchTerm] = useStorageState('React');
+  const [searchTerm, setSearchTerm] = useStorageState('search', 'React');
 
   const handleSearch = (event) => {
     setSearchTerm(event.target.value);
