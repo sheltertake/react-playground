@@ -4,6 +4,9 @@ import styled from 'styled-components';
 
 import './App.css'
 import styles from './App.module.css';
+// import { ReactComponent as Check } from './check.svg';
+// https://github.com/nrwl/nx/issues/19282
+import Check from './check.svg?react'; // this is new in vite-plugin-svgr v4.0.0
 
 /* eslint-disable react/prop-types */
 const StyledContainer = styled.div`
@@ -163,7 +166,7 @@ const SearchForm = ({
         disabled={!searchTerm}
         className={`${styles.button} ${styles.buttonLarge}`}
       >
-        Submit
+        <Check height="18px" width="18px" />
       </button>
     </form>
   );
@@ -190,7 +193,8 @@ const Item = ({ item, onRemoveItem }) => {
           onClick={() => onRemoveItem(item)}
           className={`${styles.button} ${styles.buttonSmall}`}
         >
-          Dismiss
+          
+         <Check height="18px" width="18px" />
         </button>
       </span>
     </li>
