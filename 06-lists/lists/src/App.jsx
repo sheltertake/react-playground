@@ -1,6 +1,8 @@
 import React from 'react';
 import axios from 'axios';
 
+/* eslint-disable react/prop-types */
+
 const API_ENDPOINT = 'https://hn.algolia.com/api/v1/search?query=';
 
 const getAsyncStories = (url) =>
@@ -59,8 +61,9 @@ const App = () => {
   const handleSearchInput = (event) => {
     setSearchTerm(event.target.value);
   };
-  const handleSearchSubmit = () => {
+  const handleSearchSubmit = (event) => {
     setUrl(`${API_ENDPOINT}${searchTerm}`);
+    event.preventDefault();
   };
   const [stories, dispatchStories] = React.useReducer(
     storiesReducer,
@@ -106,10 +109,10 @@ const App = () => {
   return (
     <div>
       <h1>My Hacker Stories</h1>
-      <Search
+      <SearchForm
         searchTerm={searchTerm}
-        handleSearchInput={handleSearchInput}
-        handleSearchSubmit={handleSearchSubmit}
+        onSearchInput={handleSearchInput}
+        onSearchSubmit={handleSearchSubmit}
       />
       <hr />
 
@@ -124,30 +127,29 @@ const App = () => {
   );
 }
 
-const Search = ({
+const SearchForm = ({
   searchTerm,
-  handleSearchInput,
-  handleSearchSubmit
+  onSearchInput,
+  onSearchSubmit,
 }) => {
   return (
-    <>
+    <form onSubmit={onSearchSubmit}>
       <InputWithLabel
         id="search"
         label="Search"
         value={searchTerm}
         isFocused
-        onInputChange={handleSearchInput}
+        onInputChange={onSearchInput}
       >
         <strong>Search:</strong>
       </InputWithLabel>
       <button
-        type="button"
+        type="submit"
         disabled={!searchTerm}
-        onClick={handleSearchSubmit}
       >
         Submit
       </button>
-    </>
+    </form>
   );
 };
 const List = ({ list, onRemoveItem }) => (

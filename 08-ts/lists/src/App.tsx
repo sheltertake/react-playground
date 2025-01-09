@@ -102,8 +102,9 @@ const App = () => {
   const handleSearchInput = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value);
   };
-  const handleSearchSubmit = () => {
+  const handleSearchSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     setUrl(`${API_ENDPOINT}${searchTerm}`);
+    event.preventDefault();
   };
   const [stories, dispatchStories] = React.useReducer(
     storiesReducer,
@@ -149,10 +150,10 @@ const App = () => {
   return (
     <div>
       <h1>My Hacker Stories (TS)</h1>
-      <Search
+      <SearchForm
         searchTerm={searchTerm}
-        handleSearchInput={handleSearchInput}
-        handleSearchSubmit={handleSearchSubmit}
+        onSearchInput={handleSearchInput}
+        onSearchSubmit={handleSearchSubmit}
       />
       <hr />
       {stories.isError && <p>Something went wrong ...</p>}
@@ -167,33 +168,32 @@ const App = () => {
   );
 }
 
-const Search = ({
+const SearchForm = ({
   searchTerm,
-  handleSearchInput,
-  handleSearchSubmit
+  onSearchInput,
+  onSearchSubmit,
 }: {
   searchTerm: string,
-  handleSearchInput: (event: React.ChangeEvent<HTMLInputElement>) => void,
-  handleSearchSubmit: () => void,
+  onSearchInput: (event: React.ChangeEvent<HTMLInputElement>) => void,
+  onSearchSubmit: (event: React.FormEvent<HTMLFormElement>) => void,
 }) => {
   return (
-    <>
+    <form onSubmit={onSearchSubmit}>
       <InputWithLabel
         id="search"
         value={searchTerm}
         isFocused
-        onInputChange={handleSearchInput}
+        onInputChange={onSearchInput}
       >
         <strong>Search:</strong>
       </InputWithLabel>
       <button
-        type="button"
+        type="submit"
         disabled={!searchTerm}
-        onClick={handleSearchSubmit}
       >
         Submit
       </button>
-    </>
+    </form>
   );
 };
 const List = ({ list, onRemoveItem }: { list: Stories, onRemoveItem: (item: Story) => void }) => (
