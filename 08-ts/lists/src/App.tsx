@@ -111,20 +111,21 @@ const App = () => {
   );
 
   //React’s useCallback Hook creates a memoized function every time its dependency array (E) changes
-  const handleFetchStories = React.useCallback(() => {
+  const handleFetchStories = React.useCallback(async () => {
 
     dispatchStories({ type: 'STORIES_FETCH_INIT' });
 
-    getAsyncStories(url)
-      .then(result => {
-        dispatchStories({
-          type: 'STORIES_FETCH_SUCCESS',
-          payload: result.data.hits,
-        });
-      })
-      .catch(() =>
-        dispatchStories({ type: 'STORIES_FETCH_FAILURE' })
-      );
+    try {
+      const result = await getAsyncStories(url);
+
+      dispatchStories({
+        type: 'STORIES_FETCH_SUCCESS',
+        payload: result.data.hits,
+      });
+
+    } catch {
+      dispatchStories({ type: 'STORIES_FETCH_FAILURE' });
+    }
 
   }, [url]);
 
