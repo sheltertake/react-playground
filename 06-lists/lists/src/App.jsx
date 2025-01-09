@@ -94,7 +94,7 @@ const App = () => {
   }, [handleFetchStories]);
 
   const searchedStories = stories.data.filter((story) =>
-    story.title.toLowerCase().includes(searchTerm.toLowerCase())
+    story.title?.toLowerCase().includes(searchTerm?.toLowerCase())
   );
 
   const handleRemoveStory = (item) => {
@@ -138,7 +138,6 @@ const SearchForm = ({
         id="search"
         label="Search"
         value={searchTerm}
-        isFocused
         onInputChange={onSearchInput}
       >
         <strong>Search:</strong>
@@ -177,34 +176,28 @@ const Item = ({ item, onRemoveItem }) => {
   );
 }
 
-const InputWithLabel = ({
-  id,
-  value,
-  type = 'text',
-  onInputChange,
-  isFocused,
-  children,
-}) => {
-
-  const inputRef = React.useRef();
-  React.useEffect(() => {
-    if (isFocused && inputRef.current) {
-      inputRef.current.focus();
-    }
-  }, [isFocused]);
-
-  return (
-    <>
-      <label htmlFor={id}>{children}</label>
-      &nbsp;
-      <input
-        id={id}
-        type={type}
-        value={value}
-        autoFocus={isFocused}
-        onChange={onInputChange}
-      />
-    </>
-  );
+class InputWithLabel extends React.Component {
+  render() {
+    const {
+      id,
+      value,
+      type = 'text',
+      onInputChange,
+      children,
+    } = this.props;
+    return (
+      <>
+        <label htmlFor={id}>{children}</label>
+        &nbsp;
+        <input
+          id={id}
+          type={type}
+          value={value}
+          onChange={onInputChange}
+        />
+      </>
+    );
+  }
 }
+
 export default App;
