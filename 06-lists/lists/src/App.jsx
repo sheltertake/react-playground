@@ -138,6 +138,7 @@ const SearchForm = ({
         id="search"
         label="Search"
         value={searchTerm}
+        isFocused
         onInputChange={onSearchInput}
       >
         <strong>Search:</strong>
@@ -177,6 +178,18 @@ const Item = ({ item, onRemoveItem }) => {
 }
 
 class InputWithLabel extends React.Component {
+
+  constructor(props) {
+    super(props);
+    this.inputRef = React.createRef();
+  }
+
+  componentDidMount() {
+    if (this.props.isFocused) {
+      this.inputRef.current.focus();
+    }
+  }
+
   render() {
     const {
       id,
@@ -190,6 +203,7 @@ class InputWithLabel extends React.Component {
         <label htmlFor={id}>{children}</label>
         &nbsp;
         <input
+          ref={this.inputRef}
           id={id}
           type={type}
           value={value}
