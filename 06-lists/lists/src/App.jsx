@@ -20,7 +20,7 @@ const initialStories = [
 ];
 
 const getAsyncStories = () =>
-  new Promise((resolve, reject) =>
+  new Promise((resolve) =>
     setTimeout(
       () => resolve({ data: { stories: initialStories } }),
       2000
