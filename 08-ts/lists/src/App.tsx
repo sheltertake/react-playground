@@ -184,6 +184,7 @@ const SearchForm = ({
         id="search"
         value={searchTerm}
         onInputChange={onSearchInput}
+        isFocused
       >
         <strong>Search:</strong>
       </InputWithLabel>
@@ -232,35 +233,41 @@ const Item = ({
 }
 
 
-class InputWithLabel extends React.Component {
-  render() {
-    const {
-      id,
-      value,
-      type = 'text',
-      onInputChange,
-      children,
-    } = this.props as {
-      id: string,
-      value: string,
-      type?: string,
-      onInputChange: (event: React.ChangeEvent<HTMLInputElement>) => void,
-      children: React.ReactNode
-    };
-    return (
-      <>
-        <label htmlFor={id}>{children}</label>
-        &nbsp;
-        <input
-          id={id}
-          type={type}
-          value={value}
-          onChange={onInputChange}
-          className="input"
-        />
-      </>
-    );
-  }
+const InputWithLabel = ({
+  id,
+  value,
+  type = 'text',
+  onInputChange,
+  isFocused,
+  children,
+}: {
+  id: string,
+  value: string,
+  type?: string,
+  onInputChange: (event: React.ChangeEvent<HTMLInputElement>) => void,
+  isFocused: boolean,
+  children: React.ReactNode
+}) => {
+  const inputRef = React.useRef<HTMLInputElement>();
+  React.useEffect(() => {
+    if (isFocused && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [isFocused]);
+
+  return (
+    <>
+      <label htmlFor={id}>{children}</label>
+      &nbsp;
+      <input
+        id={id}
+        type={type}
+        value={value}
+        onChange={onInputChange}
+      />
+    </>
+  );
 }
+
 
 export default App
