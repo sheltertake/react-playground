@@ -1,10 +1,10 @@
 import React from 'react';
+import axios from 'axios';
 
 const API_ENDPOINT = 'https://hn.algolia.com/api/v1/search?query=';
 
 const getAsyncStories = (url) =>
-  fetch(url)
-    .then((response) => response.json());
+  axios.get(url);
 
 const storiesReducer = (state, action) => {
   switch (action.type) {
@@ -74,9 +74,10 @@ const App = () => {
 
     getAsyncStories(url)
       .then(result => {
+        console.log(result)
         dispatchStories({
           type: 'STORIES_FETCH_SUCCESS',
-          payload: result.hits,
+          payload: result.data.hits,
         });
       })
       .catch(() =>

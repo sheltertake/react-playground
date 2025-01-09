@@ -1,4 +1,5 @@
 import * as React from 'react';
+import axios from 'axios';
 
 import './App.css'
 
@@ -41,9 +42,9 @@ type StoriesAction = StoriesFetchStatesAction | StoriesFetchSuccessAction | Stor
 
 const API_ENDPOINT = 'https://hn.algolia.com/api/v1/search?query=';
 
-const getAsyncStories = (url: string): Promise<{ hits: Stories }> =>
-  fetch(url)
-    .then((response) => response.json());
+const getAsyncStories = (url: string): Promise<{ data: { hits: Stories } }> =>
+  axios
+    .get(url);
 
 const storiesReducer = (state: StoriesState, action: StoriesAction) => {
   switch (action.type) {
@@ -118,7 +119,7 @@ const App = () => {
       .then(result => {
         dispatchStories({
           type: 'STORIES_FETCH_SUCCESS',
-          payload: result.hits,
+          payload: result.data.hits,
         });
       })
       .catch(() =>
