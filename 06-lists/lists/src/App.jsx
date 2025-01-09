@@ -9,6 +9,8 @@ import styles from './App.module.css';
 import Check from './check.svg?react'; // this is new in vite-plugin-svgr v4.0.0
 
 /* eslint-disable react/prop-types */
+/* eslint-disable react/display-name */
+
 const StyledContainer = styled.div`
   height: 100vw;
   padding: 20px;
@@ -23,8 +25,10 @@ const StyledHeadlinePrimary = styled.h1`
 `;
 const API_ENDPOINT = 'https://hn.algolia.com/api/v1/search?query=';
 
-const getAsyncStories = (url) =>
-  axios.get(url);
+const getAsyncStories = (url) => {
+  console.log('getAsyncStories', url);
+  return axios.get(url);
+}
 
 const storiesReducer = (state, action) => {
   switch (action.type) {
@@ -77,6 +81,7 @@ const useStorageState = (key, initialState) => {
 
 const App = () => {
 
+  const isMounted = React.useRef(false);
 
   const [searchTerm, setSearchTerm] = useStorageState('search', 'React');
   const [url, setUrl] = React.useState(
@@ -117,18 +122,25 @@ const App = () => {
     handleFetchStories();
   }, [handleFetchStories]);
 
-  const searchedStories = stories.data.filter((story) =>
-    story.title?.toLowerCase().includes(searchTerm?.toLowerCase())
-  );
-
-  const handleRemoveStory = (item) => {
+  // const searchedStories = stories.data.filter((story) =>
+  //   story.title?.toLowerCase().includes(searchTerm?.toLowerCase())
+  // );
+  const handleRemoveStory = React.useCallback((item) => {
+  // const handleRemoveStory = (item) => {
     console.log('handleRemoveStory', item)
     dispatchStories({
       type: 'REMOVE_STORY',
       payload: item,
     });
-  };
+  },[]);
 
+  
+  if (!isMounted.current) {
+    console.log('B:App - first render');
+    isMounted.current = true;
+  } else {
+    console.log('B:App', stories?.isLoading);
+  }
 
   return (
     <StyledContainer>
@@ -145,7 +157,8 @@ const App = () => {
       {stories.isLoading ? (
         <p>Loading ...</p>
       ) : (
-        <List list={searchedStories} onRemoveItem={handleRemoveStory} />
+        <List list={stories.data}  onRemoveItem={handleRemoveStory}
+         />
       )}
     </StyledContainer>
   );
@@ -177,13 +190,28 @@ const SearchForm = ({
     </form>
   );
 };
-const List = ({ list, onRemoveItem }) => (
-  <ul>
-    {list.map(item => (
-      <Item key={item.objectID} item={item} onRemoveItem={onRemoveItem} />
-    ))}
-  </ul>
+const List = 
+React.memo(
+  ({ 
+    list, onRemoveItem 
+  }) => {
+    const isMounted = React.useRef(false);
+    if (!isMounted.current) {
+      console.log('B:List - first render');
+      isMounted.current = true;
+    } else {
+      console.log('B:List');
+    }
+    return (
+      <ul>
+        {list.map(item => (
+          <Item key={item.objectID} item={item} onRemoveItem={onRemoveItem}  />
+        ))}
+      </ul>
+    )
+  }
 );
+
 const Item = ({ item, onRemoveItem }) => {
   return (
     <li className={styles.item}>
