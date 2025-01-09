@@ -41,8 +41,8 @@ type StoriesAction = StoriesFetchStatesAction | StoriesFetchSuccessAction | Stor
 
 const API_ENDPOINT = 'https://hn.algolia.com/api/v1/search?query=';
 
-const getAsyncStories = (searchTerm: string): Promise<{ hits: Stories }> =>
-  fetch(`${API_ENDPOINT}${searchTerm}`)
+const getAsyncStories = (url: string): Promise<{ hits: Stories }> =>
+  fetch(url)
     .then((response) => response.json());
 
 const storiesReducer = (state: StoriesState, action: StoriesAction) => {
@@ -95,30 +95,41 @@ const useStorageState = (
 const App = () => {
 
   const [searchTerm, setSearchTerm] = useStorageState('search', 'React');
-
-  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const [url, setUrl] = React.useState(
+    `${API_ENDPOINT}${searchTerm}`
+  );
+  const handleSearchInput = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value);
   };
-
+  const handleSearchSubmit = () => {
+    setUrl(`${API_ENDPOINT}${searchTerm}`);
+  };
   const [stories, dispatchStories] = React.useReducer(
     storiesReducer,
     { data: [], isLoading: false, isError: false }
   );
 
-  React.useEffect(() => {
-    if (!searchTerm) return;
+  //React’s useCallback Hook creates a memoized function every time its dependency array (E) changes
+  const handleFetchStories = React.useCallback(() => {
 
     dispatchStories({ type: 'STORIES_FETCH_INIT' });
 
-    getAsyncStories(searchTerm)
+    getAsyncStories(url)
       .then(result => {
         dispatchStories({
           type: 'STORIES_FETCH_SUCCESS',
           payload: result.hits,
         });
       })
-      .catch(() => dispatchStories({ type: 'STORIES_FETCH_FAILURE' }));
-  }, [searchTerm]);
+      .catch(() =>
+        dispatchStories({ type: 'STORIES_FETCH_FAILURE' })
+      );
+
+  }, [url]);
+
+  React.useEffect(() => {
+    handleFetchStories();
+  }, [handleFetchStories]);
 
 
   const searchedStories = stories.data.filter((story: Story) =>
@@ -136,7 +147,11 @@ const App = () => {
   return (
     <div>
       <h1>My Hacker Stories (TS)</h1>
-      <Search searchTerm={searchTerm} handleSearch={handleSearch} />
+      <Search
+        searchTerm={searchTerm}
+        handleSearchInput={handleSearchInput}
+        handleSearchSubmit={handleSearchSubmit}
+      />
       <hr />
       {stories.isError && <p>Something went wrong ...</p>}
 
@@ -152,10 +167,12 @@ const App = () => {
 
 const Search = ({
   searchTerm,
-  handleSearch
+  handleSearchInput,
+  handleSearchSubmit
 }: {
   searchTerm: string,
-  handleSearch: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  handleSearchInput: (event: React.ChangeEvent<HTMLInputElement>) => void,
+  handleSearchSubmit: () => void,
 }) => {
   return (
     <>
@@ -163,10 +180,17 @@ const Search = ({
         id="search"
         value={searchTerm}
         isFocused
-        onInputChange={handleSearch}
+        onInputChange={handleSearchInput}
       >
         <strong>Search:</strong>
       </InputWithLabel>
+      <button
+        type="button"
+        disabled={!searchTerm}
+        onClick={handleSearchSubmit}
+      >
+        Submit
+      </button>
     </>
   );
 };
