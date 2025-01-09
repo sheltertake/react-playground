@@ -274,3 +274,5 @@ class InputWithLabel extends React.Component {
 }
 
 export default App;
+
+export { storiesReducer, SearchForm, InputWithLabel, List, Item };
