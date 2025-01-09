@@ -52,6 +52,8 @@
 
 .button_large {
     padding: 10px;
+    background-color: #171212;
+    color: #ffffff;
 }
 
 .search-form {

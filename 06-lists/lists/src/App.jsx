@@ -1,5 +1,6 @@
 import React from 'react';
 import axios from 'axios';
+import clsx from 'clsx';
 
 import './App.css'
 import styles from './App.module.css';
@@ -149,7 +150,7 @@ const SearchForm = ({
       <button
         type="submit"
         disabled={!searchTerm}
-        className={`${styles.button} ${styles.buttonLarge}`}
+        className={clsx(styles.button, styles.buttonLarge)}
       >
         Submit
       </button>
