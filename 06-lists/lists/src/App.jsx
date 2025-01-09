@@ -1,12 +1,23 @@
 import React from 'react';
 import axios from 'axios';
-import clsx from 'clsx';
+import styled from 'styled-components';
 
 import './App.css'
 import styles from './App.module.css';
 
 /* eslint-disable react/prop-types */
-
+const StyledContainer = styled.div`
+  height: 100vw;
+  padding: 20px;
+  background: #171212;
+  background: linear-gradient(to left, #fff, #999);
+  color: #171212;
+`;
+const StyledHeadlinePrimary = styled.h1`
+  font-size: 48px;
+  font-weight: 300;
+  letter-spacing: 2px;
+`;
 const API_ENDPOINT = 'https://hn.algolia.com/api/v1/search?query=';
 
 const getAsyncStories = (url) =>
@@ -111,8 +122,8 @@ const App = () => {
 
 
   return (
-    <div className={styles.container}>
-      <h1 className={styles.headlinePrimary}>My Hacker Stories</h1>
+    <StyledContainer>
+      <StyledHeadlinePrimary>My Hacker Stories</StyledHeadlinePrimary>
       <SearchForm
         searchTerm={searchTerm}
         onSearchInput={handleSearchInput}
@@ -127,7 +138,7 @@ const App = () => {
       ) : (
         <List list={searchedStories} onRemoveItem={handleRemoveStory} />
       )}
-    </div>
+    </StyledContainer>
   );
 }
 
@@ -150,7 +161,7 @@ const SearchForm = ({
       <button
         type="submit"
         disabled={!searchTerm}
-        className={clsx(styles.button, styles.buttonLarge)}
+        className={`${styles.button} ${styles.buttonLarge}`}
       >
         Submit
       </button>
