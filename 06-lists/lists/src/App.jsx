@@ -60,11 +60,17 @@ const storiesReducer = (state, action) => {
 };
 
 const useStorageState = (key, initialState) => {
+  const isMounted = React.useRef(false);
   const [value, setValue] = React.useState(
     localStorage.getItem(key) || initialState
   );
   React.useEffect(() => {
-    localStorage.setItem(key, value);
+    if (!isMounted.current) {
+      isMounted.current = true;
+    } else {
+      console.log('useStorageState.useEffect', value);
+      localStorage.setItem(key, value);
+    }
   }, [value, key]);
   return [value, setValue];
 };
@@ -193,8 +199,8 @@ const Item = ({ item, onRemoveItem }) => {
           onClick={() => onRemoveItem(item)}
           className={`${styles.button} ${styles.buttonSmall}`}
         >
-          
-         <Check height="18px" width="18px" />
+
+          <Check height="18px" width="18px" />
         </button>
       </span>
     </li>
